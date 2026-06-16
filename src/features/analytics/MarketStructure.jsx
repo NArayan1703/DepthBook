@@ -7,7 +7,7 @@ const MarketStructure = () => {
   const { walls } = useAnalytics();
 
   const getTrend = () => {
-    if (!ticker) return 'Neutral';
+    if (!ticker?.priceChangePercent) return 'Neutral';
     const change = parseFloat(ticker.priceChangePercent);
     if (change > 2) return 'Strong Bullish';
     if (change > 0.5) return 'Bullish';
@@ -39,18 +39,21 @@ const MarketStructure = () => {
       <div className="border-t border-muted/10 pt-2 flex flex-col gap-1">
         <span className="text-muted uppercase font-bold tracking-tighter mb-1">Detected Support/Resistance</span>
         <div className="flex flex-col gap-1">
-          {walls.bidWalls.slice(0, 2).map((wall, i) => (
+          {walls?.bidWalls?.slice(0, 2).map((wall, i) => (
             <div key={i} className="flex justify-between items-center bg-positive/5 px-2 py-1 rounded">
               <span className="text-positive font-bold">SUPP: {parseFloat(wall.price).toLocaleString()}</span>
               <span className="text-[9px] text-muted">{wall.strength.toFixed(1)}x depth</span>
             </div>
           ))}
-          {walls.askWalls.slice(0, 2).map((wall, i) => (
+          {walls?.askWalls?.slice(0, 2).map((wall, i) => (
             <div key={i} className="flex justify-between items-center bg-negative/5 px-2 py-1 rounded">
               <span className="text-negative font-bold">RES: {parseFloat(wall.price).toLocaleString()}</span>
               <span className="text-[9px] text-muted">{wall.strength.toFixed(1)}x depth</span>
             </div>
           ))}
+          {(!walls?.bidWalls?.length && !walls?.askWalls?.length) && (
+              <span className="text-[9px] text-muted italic p-2 text-center">Scanning depth...</span>
+          )}
         </div>
       </div>
 

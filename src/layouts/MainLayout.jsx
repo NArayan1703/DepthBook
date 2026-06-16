@@ -1,5 +1,5 @@
 import React from 'react';
-import { useMarketData } from '../../hooks/useMarketData';
+import { useMarketData } from '../hooks/useMarketData';
 
 const MainLayout = ({ children }) => {
   const { symbol, setSymbol, status } = useMarketData();

@@ -8,7 +8,6 @@ const OrderBookRow = ({ price, size, total, maxTotal, type }) => {
   
   return (
     <div className={`relative flex justify-between text-[11px] font-mono py-1.5 px-3 hover:bg-white/5 group overflow-hidden transition-all duration-300 h-[26px] items-center ${flashClass}`}>
-      {/* Liquidity Bar - Subtle opacity */}
       <div 
         className={`absolute top-0 bottom-0 ${type === 'bid' ? 'right-0 bg-positive/10' : 'left-0 bg-negative/10'}`}
         style={{ width: `${percentage}%` }}
@@ -31,7 +30,8 @@ const OrderBook = () => {
   const { depth, metrics } = useMarketData();
 
   const { bids, asks, maxTotal } = useMemo(() => {
-    // Reduce to 12 levels for better spacing
+    if (!depth?.bids || !depth?.asks) return { bids: [], asks: [], maxTotal: 0 };
+    
     let currentTotal = 0;
     const processedBids = depth.bids.slice(0, 12).map(([price, size]) => {
       currentTotal += parseFloat(size);
@@ -56,37 +56,33 @@ const OrderBook = () => {
 
   return (
     <div className="flex flex-col h-full overflow-hidden select-none bg-[#0b0f1a]">
-      {/* Header - More breathable */}
       <div className="flex justify-between px-3 py-2 text-[10px] uppercase font-bold text-muted/50 border-b border-white/5 shrink-0">
         <span className="w-[35%]">Price</span>
         <span className="w-[30%] text-right">Size</span>
         <span className="w-[35%] text-right">Total</span>
       </div>
 
-      {/* Asks Container */}
       <div className="flex-1 flex flex-col justify-end overflow-hidden">
         {asks.map((ask) => (
           <OrderBookRow key={`ask-${ask.price}`} {...ask} maxTotal={maxTotal} type="ask" />
         ))}
       </div>
 
-      {/* Mid Price - High Visibility Separation */}
       <div className="my-1 bg-[#161d2f] py-2.5 px-4 border-y border-white/10 flex justify-between items-center shrink-0 mx-1 rounded-sm shadow-lg">
         <div className="flex flex-col">
             <span className={`text-base font-black font-mono tracking-tighter leading-none ${metrics?.imbalance > 0 ? 'text-positive' : 'text-negative'}`}>
-                {metrics?.midPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {metrics?.midPrice?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '---'}
             </span>
             <span className="text-[8px] text-muted font-black tracking-widest mt-1">MARKET PRICE</span>
         </div>
         <div className="text-right">
             <span className="text-xs font-bold text-text/90 block leading-none tabular-nums">
-                {metrics?.spread.toFixed(2)}
+                {metrics?.spread?.toFixed(2) || '---'}
             </span>
             <span className="text-[8px] text-muted/60 font-bold uppercase mt-1">Spread</span>
         </div>
       </div>
 
-      {/* Bids Container */}
       <div className="flex-1 overflow-hidden">
         {bids.map((bid) => (
           <OrderBookRow key={`bid-${bid.price}`} {...bid} maxTotal={maxTotal} type="bid" />

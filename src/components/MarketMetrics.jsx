@@ -2,14 +2,14 @@ import React from 'react';
 import { useMarketData } from '../hooks/useMarketData';
 
 const MarketMetrics = () => {
-  const { ticker, metrics, status } = useMarketData();
+  const { ticker, metrics } = useMarketData();
 
   const formatPrice = (val) => val ? parseFloat(val).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '---';
   const formatVol = (val) => val ? (parseFloat(val) / 1000000).toFixed(2) + 'M' : '---';
 
   const items = [
     { label: 'Mid Price', value: formatPrice(metrics?.midPrice), highlight: null },
-    { label: 'Spread', value: `${metrics?.spread.toFixed(2)} (${metrics?.spreadPercent.toFixed(3)}%)`, highlight: metrics?.spreadPercent > 0.1 ? 'warning' : 'muted' },
+    { label: 'Spread', value: metrics ? `${metrics.spread.toFixed(2)} (${metrics.spreadPercent.toFixed(3)}%)` : '---', highlight: metrics?.spreadPercent > 0.1 ? 'warning' : 'muted' },
     { label: 'Imbalance', value: metrics ? `${(metrics.imbalance * 100).toFixed(1)}%` : '---', highlight: metrics?.imbalance > 0.2 ? 'positive' : metrics?.imbalance < -0.2 ? 'negative' : 'muted' },
     { label: '24h High', value: formatPrice(ticker?.highPrice), highlight: 'muted' },
     { label: '24h Low', value: formatPrice(ticker?.lowPrice), highlight: 'muted' },

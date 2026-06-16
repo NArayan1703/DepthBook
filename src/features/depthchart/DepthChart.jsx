@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { useMarketData } from '../../hooks/useMarketData';
 
@@ -6,36 +6,41 @@ const DepthChart = () => {
   const { depth, metrics } = useMarketData();
 
   const data = useMemo(() => {
-    if (!depth.bids.length || !depth.asks.length) return [];
+    if (!depth?.bids?.length || !depth?.asks?.length) return [];
 
-    const bids = [...depth.bids].reverse().map(([price, size]) => ({
-      price: parseFloat(price),
-      bidSize: parseFloat(size),
-      askSize: 0,
-    }));
+    try {
+        const bids = [...depth.bids].reverse().map(([price, size]) => ({
+        price: parseFloat(price),
+        bidSize: parseFloat(size),
+        askSize: 0,
+        }));
 
-    let bidCumulative = 0;
-    const bidData = bids.map(item => {
-      bidCumulative += item.bidSize;
-      return { ...item, bidTotal: bidCumulative };
-    });
+        let bidCumulative = 0;
+        const bidData = bids.map(item => {
+        bidCumulative += item.bidSize;
+        return { ...item, bidTotal: bidCumulative };
+        });
 
-    const asks = [...depth.asks].map(([price, size]) => ({
-      price: parseFloat(price),
-      bidSize: 0,
-      askSize: parseFloat(size),
-    }));
+        const asks = [...depth.asks].map(([price, size]) => ({
+        price: parseFloat(price),
+        bidSize: 0,
+        askSize: parseFloat(size),
+        }));
 
-    let askCumulative = 0;
-    const askData = asks.map(item => {
-      askCumulative += item.askSize;
-      return { ...item, askTotal: askCumulative };
-    });
+        let askCumulative = 0;
+        const askData = asks.map(item => {
+        askCumulative += item.askSize;
+        return { ...item, askTotal: askCumulative };
+        });
 
-    return [...bidData, ...askData];
+        return [...bidData, ...askData];
+    } catch (err) {
+        console.error("DepthChart Processing Error:", err);
+        return [];
+    }
   }, [depth]);
 
-  if (!data.length) return <div className="flex-1 flex items-center justify-center text-muted text-xs">Loading depth data...</div>;
+  if (!data.length) return <div className="flex-1 flex items-center justify-center text-muted text-xs italic">Awaiting Market Depth...</div>;
 
   return (
     <div className="flex-1 w-full h-full min-h-[200px]">
@@ -63,7 +68,7 @@ const DepthChart = () => {
             itemStyle={{ fontSize: '10px', color: '#f8fafc' }}
             labelStyle={{ fontSize: '10px', color: '#94a3b8' }}
             formatter={(value) => [value.toFixed(4), 'Total Volume']}
-            labelFormatter={(label) => `Price: ${label.toLocaleString()}`}
+            labelFormatter={(label) => `Price: ${label?.toLocaleString()}`}
           />
           <Area 
             type="stepAfter" 
@@ -81,7 +86,7 @@ const DepthChart = () => {
             fill="url(#colorAsk)" 
             isAnimationActive={false}
           />
-          <ReferenceLine x={metrics?.midPrice} stroke="#94a3b8" strokeDasharray="3 3" />
+          {metrics?.midPrice && <ReferenceLine x={metrics.midPrice} stroke="#94a3b8" strokeDasharray="3 3" />}
         </AreaChart>
       </ResponsiveContainer>
     </div>

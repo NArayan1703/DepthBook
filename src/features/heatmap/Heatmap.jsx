@@ -8,7 +8,7 @@ const Heatmap = () => {
   const maxHistory = 100;
 
   useEffect(() => {
-    if (!depth.bids.length || !depth.asks.length) return;
+    if (!depth?.bids?.length || !depth?.asks?.length) return;
 
     setHistory(prev => {
       const newSnapshot = {
@@ -22,7 +22,7 @@ const Heatmap = () => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas || history.length < 2) return;
+    if (!canvas || !history || history.length < 2) return;
 
     const ctx = canvas.getContext('2d');
     const width = canvas.width;
@@ -30,55 +30,62 @@ const Heatmap = () => {
 
     ctx.clearRect(0, 0, width, height);
 
-    // Calculate price range
-    const allPrices = history.flatMap(s => [
-      ...s.bids.map(b => parseFloat(b[0])),
-      ...s.asks.map(a => parseFloat(a[0]))
-    ]);
-    const minPrice = Math.min(...allPrices);
-    const maxPrice = Math.max(...allPrices);
-    const priceRange = maxPrice - minPrice;
+    try {
+        // Calculate price range
+        const allPrices = history.flatMap(s => [
+        ...(s.bids?.map(b => parseFloat(b[0])) || []),
+        ...(s.asks?.map(a => parseFloat(a[0])) || [])
+        ]).filter(p => !isNaN(p));
 
-    if (priceRange === 0) return;
+        if (allPrices.length === 0) return;
 
-    const cellWidth = width / maxHistory;
-    
-    history.forEach((snapshot, xIndex) => {
-      const x = xIndex * cellWidth;
+        const minPrice = Math.min(...allPrices);
+        const maxPrice = Math.max(...allPrices);
+        const priceRange = maxPrice - minPrice;
 
-      // Draw Bids
-      snapshot.bids.forEach(([priceStr, sizeStr]) => {
-        const price = parseFloat(priceStr);
-        const size = parseFloat(sizeStr);
-        const y = height - ((price - minPrice) / priceRange) * height;
+        if (priceRange === 0) return;
+
+        const cellWidth = width / maxHistory;
         
-        const intensity = Math.min(size / 5, 1); // Normalize intensity
-        ctx.fillStyle = `rgba(34, 197, 94, ${intensity})`;
-        ctx.fillRect(x, y, cellWidth, 2);
-      });
+        history.forEach((snapshot, xIndex) => {
+        const x = xIndex * cellWidth;
 
-      // Draw Asks
-      snapshot.asks.forEach(([priceStr, sizeStr]) => {
-        const price = parseFloat(priceStr);
-        const size = parseFloat(sizeStr);
-        const y = height - ((price - minPrice) / priceRange) * height;
-        
-        const intensity = Math.min(size / 5, 1); // Normalize intensity
-        ctx.fillStyle = `rgba(239, 68, 68, ${intensity})`;
-        ctx.fillRect(x, y, cellWidth, 2);
-      });
-    });
+        // Draw Bids
+        snapshot.bids?.forEach(([priceStr, sizeStr]) => {
+            const price = parseFloat(priceStr);
+            const size = parseFloat(sizeStr);
+            const y = height - ((price - minPrice) / priceRange) * height;
+            
+            const intensity = Math.min(size / 5, 1); 
+            ctx.fillStyle = `rgba(34, 197, 94, ${intensity})`;
+            ctx.fillRect(x, y, cellWidth, 2);
+        });
 
-    // Draw current price line
-    if (metrics?.midPrice) {
-        const currentY = height - ((metrics.midPrice - minPrice) / priceRange) * height;
-        ctx.strokeStyle = 'rgba(148, 163, 184, 0.5)';
-        ctx.setLineDash([5, 5]);
-        ctx.beginPath();
-        ctx.moveTo(0, currentY);
-        ctx.lineTo(width, currentY);
-        ctx.stroke();
-        ctx.setLineDash([]);
+        // Draw Asks
+        snapshot.asks?.forEach(([priceStr, sizeStr]) => {
+            const price = parseFloat(priceStr);
+            const size = parseFloat(sizeStr);
+            const y = height - ((price - minPrice) / priceRange) * height;
+            
+            const intensity = Math.min(size / 5, 1);
+            ctx.fillStyle = `rgba(239, 68, 68, ${intensity})`;
+            ctx.fillRect(x, y, cellWidth, 2);
+        });
+        });
+
+        // Draw current price line
+        if (metrics?.midPrice) {
+            const currentY = height - ((metrics.midPrice - minPrice) / priceRange) * height;
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.5)';
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(0, currentY);
+            ctx.lineTo(width, currentY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+    } catch (err) {
+        console.error("Heatmap Rendering Error:", err);
     }
 
   }, [history, metrics]);
@@ -94,6 +101,11 @@ const Heatmap = () => {
       <div className="absolute top-1 right-2 text-[8px] text-muted uppercase font-bold pointer-events-none">
         Historical Liquidity Intensity
       </div>
+      {history.length < 2 && (
+          <div className="absolute inset-0 flex items-center justify-center text-[10px] text-muted italic">
+              Initializing Heatmap...
+          </div>
+      )}
     </div>
   );
 };
