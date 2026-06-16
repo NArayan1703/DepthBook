@@ -1,5 +1,7 @@
 # DepthBook: Institutional Market Microstructure Terminal
 
+**Live Terminal:** [https://depth-book.vercel.app/](https://depth-book.vercel.app/)
+
 **DepthBook** is a high-performance trading analytics terminal designed for the analysis of **Market Microstructure**, **Liquidity Dynamics**, and **Order Flow Toxicity**. It provides a granular, real-time visualization of the Limit Order Book (LOB) and trade execution flow, enabling traders to identify institutional positioning and market pressure.
 
 ---
