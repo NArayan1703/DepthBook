@@ -1,70 +1,56 @@
-# DepthBook: Real-Time Order Book Visualizer
+# DepthBook: Institutional Market Microstructure Terminal
 
-DepthBook is a professional-grade trading analytics platform that visualizes cryptocurrency market liquidity, order books, and market microstructure. It provides a data-dense, institutional-style interface for real-time order flow analysis.
+**DepthBook** is a high-performance trading analytics terminal designed for the analysis of **Market Microstructure**, **Liquidity Dynamics**, and **Order Flow Toxicity**. It provides a granular, real-time visualization of the Limit Order Book (LOB) and trade execution flow, enabling traders to identify institutional positioning and market pressure.
 
-##  Features
+---
 
-- **Real-Time Order Book:** 20 levels of bid/ask depth with integrated liquidity bars and cumulative volume.
-- **Dynamic Depth Chart:** Visualize market depth curves and mid-price spread using Recharts.
-- **Liquidity Heatmap:** A simplified Bookmap-style canvas visualization tracking historical liquidity intensity.
-- **Trade Tape (Time & Sales):** Real-time trade feed with aggressor detection and large trade highlighting.
-- **Analytical Engines:**
-  - **Imbalance Engine:** Monitors order book pressure.
-  - **Liquidity Wall Detector:** Identifies large resting orders acting as support/resistance.
-  - **Large Trade Detector:** Alerts for "whale" activity (> $100k).
-- **Market Structure Panel:** Real-time trend analysis, support/resistance detection, and automated market commentary.
-- **Risk Dashboard:** Live volatility and liquidity risk monitoring.
-- **Educational Section:** Integrated terminology guide for market microstructure concepts.
-- **Multi-Symbol Support:** Switch between BTC, ETH, SOL, and BNB instantly.
+##  Quantitative Trading & Market Analysis Features
 
-## Technology Stack
+### 1. Limit Order Book (LOB) Analysis
+- **Liquidity Depth Mapping:** Real-time visualization of resting orders (Bids/Asks) at multiple price levels to identify support and resistance zones.
+- **Cumulative Depth Curve:** Visual representation of market thickness, allowing for the assessment of potential **Slippage** and **Market Impact** for large block trades.
+- **Spread Efficiency Monitoring:** Constant tracking of the Bid-Ask spread and Mid-price to monitor market regime shifts and liquidity fragmentation.
 
-- **Frontend:** React 19, Vite
-- **Styling:** Tailwind CSS (Custom Professional Dark Theme)
-- **Data Visualization:** Recharts, HTML5 Canvas
-- **Icons:** React Icons
-- **Real-Time Data:** Direct Binance WebSocket API
+### 2. Order Flow & Aggressor Tracking
+- **Aggressor Analysis (Time & Sales):** Distinguished tracking of "Lifting the Offer" vs. "Hitting the Bid" to identify aggressive buying/selling vs. passive liquidity provisioning.
+- **Whale Detection & Block Trade Filtering:** Real-time detection of institutional-sized executions (> $100k) to monitor **Smart Money** movement and stop-run potential.
 
-##  Architecture
+### 3. Predictive Microstructure Engines
+- **Order Flow Imbalance (OFI):** A quantitative indicator calculating the volume ratio between Bids and Asks. High positive imbalance often precedes short-term price appreciation (Bullish Pressure).
+- **Liquidity Wall Detection:** Algorithmic scanning for **Iceberg Orders** and significant resting liquidity that acts as a barrier to price discovery.
+- **Market Pressure Score:** A proprietary composite score (0-100) factoring in OFI, trade velocity, and spread volatility to determine current market sentiment.
 
-The project follows a feature-based folder structure for scalability and maintainability:
+### 4. Risk & Volatility Intelligence
+- **Real-Time Volatility Assessment:** Monitoring price change velocity to assess market stability.
+- **Liquidity Risk Meter:** Evaluates the risk of "Flash Crashes" or rapid liquidity evaporation based on LOB thinning.
 
-```
-src/
-├── features/
-│   ├── orderbook/     # Order book rendering & logic
-│   ├── depthchart/    # Recharts depth curve
-│   ├── trades/        # Trade tape & whale detection
-│   ├── heatmap/       # Canvas-based liquidity history
-│   ├── analytics/     # Market structure & risk engines
-│   ├── alerts/        # Centralized alert system
-│   └── education/     # Glossary & terminology
-├── services/          # Binance WebSocket singleton
-├── hooks/             # Market data & analytics hooks
-└── components/        # Shared UI components
-```
+---
 
-##  Market Microstructure Concepts
+##  Market Microstructure Concepts Applied
 
-- **Market Liquidity:** DepthBook helps identify where large orders are "resting" in the book, providing insights into potential price reversals.
-- **Order Flow Imbalance:** By comparing total bid volume vs ask volume, the Imbalance Engine provides a lead indicator of buying/selling pressure.
-- **Aggressor vs Passive:** The Trade Tape distinguishes between buyers "lifting the offer" and sellers "hitting the bid," revealing which side is currently aggressive.
-- **Liquidity Walls:** Detecting orders that are significantly larger than the average helps identify institutional boundaries.
+This terminal is built upon core principles of **Financial Engineering** and **Market Making**:
 
-##  Getting Started
+*   **Inventory Risk:** By monitoring the imbalance, a trader can gauge the risk exposure of market makers and predict potential mean-reversion or momentum breakouts.
+*   **Adverse Selection:** The terminal identifies "Informed Flow" by tracking aggressive trade streaks, helping traders avoid "getting picked off" by toxic order flow.
+*   **Price Discovery:** By visualizing the full depth instead of just the top-of-book (L1), the terminal reveals where the true supply and demand equilibrium resides.
+*   **Arbitrage Opportunities:** Cross-exchange price comparison (V2 architecture) highlights fragmented liquidity and potential triangular or spatial arbitrage windows.
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+---
 
-2. **Run the development server:**
-   ```bash
-   npm run dev
-   ```
+##  Strategic Utility for Traders
 
-3. **Open the application:**
-   Navigate to `http://localhost:5173` in your browser.
+*   **Scalping & Intraday Trading:** Use OFI and Liquidity Walls to find high-probability entries at the "edges" of the book.
+*   **Execution Strategy:** Determine the optimal time to execute large orders by waiting for deep liquidity clusters to minimize market impact.
+*   **Market Regime Detection:** Identify whether the market is in a **Mean-Reverting (Range-bound)** state or a **Trend (Order Flow driven)** state.
 
+---
 
+## Vision & Quantitative Roadmap
 
+- **Historical Replay & Backtesting:** Analyze how past liquidity walls influenced price action during major volatility events.
+- **Cross-Exchange Aggregation:** A consolidated view of the global order book (Binance, Coinbase, Kraken) to identify global liquidity imbalances.
+- **Sentiment & Social Correlation:** Correlating order flow shifts with macro news and social sentiment triggers.
+
+---
+
+**DepthBook** is more than a visualizer; it is a quantitative research environment for understanding the mechanical forces that drive price movement in electronic markets.
